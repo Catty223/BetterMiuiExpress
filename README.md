@@ -4,6 +4,8 @@ English | [中文](README.zh-Hans.md)
 
 BetterMiuiExpress is an Xposed module that prevents express details to be displayed in third-party apps such as Taobao, CaiNiao, etc. and shows a custom activity to display the details.
 
+**Privacy phone number in Taobao is not supported. If enabled, querying details of packages delivered by SF will fail.**
+
 ## Prerequisites
 
 - MIUI based on Android 7.0 or above.
@@ -17,7 +19,7 @@ The following instructions are based on LSPosed.
 - Make sure that your device has installed LSPosed or other Xposed-compatible frameworks **with XSharedPreferences support**
 - Download this module from CoolApk or compile by yourself
 - Enable this module and check MIUI Personal Assistant as the scope. You may unchecked the System Apps option in the menu to find it
-- If you want to retrieve express details from KuaiDi100, open BetterMiuiExpress from your Xposed framework manager and fill in the text inputs with your KuaiDi100 customer and secret key and click 'Save'. If you want to retrieve express details from CaiNiao, leave the fields mentioned above blank and click 'Save'
+- If you want to retrieve express details from KuaiDi100, you need KuaiDi100 customer and secret key
 - Kill the MIUI Personal Assistant apps manually in LSPosed or Settings
 - Swipe to MIUI Personal Assistant in the launcher. Now clicking the express items will not lead to jumping to third-party apps, and the latest express details will be displayed in the app widget
 

@@ -3,6 +3,7 @@ package com.moefactory.bettermiuiexpress.base.app
 const val PREF_NAME = "better_miui_express"
 const val PREF_KEY_SECRET_KEY = "secretKey"
 const val PREF_KEY_CUSTOMER = "customer"
+const val PREF_KEY_DATA_SOURCE = "dataSource"
 
 const val BME_MAIN_ACTIVITY_ALIAS = "com.moefactory.bettermiuiexpress.activity.MainActivityAlias"
 
@@ -14,6 +15,9 @@ const val PA_EXPRESS_INTENT_UTILS_OLD =
     "com.miui.personalassistant.express.ExpressIntentUtils"
 const val PA_EXPRESS_INTENT_UTILS =
     "com.miui.personalassistant.service.express.ExpressIntentUtils"
+
+// Fully-qualified name of ExpressRouter
+const val PA_EXPRESS_ROUTER = "com.miui.personalassistant.service.express.route.ExpressRouter"
 
 // Fully-qualified name of ExpressEntry
 const val PA_EXPRESS_ENTRY_OLD =

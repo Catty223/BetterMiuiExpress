@@ -30,7 +30,14 @@ class HookEntry : IYukiHookXposedInit {
     private val customer: String?
         get() = pref?.getString(PREF_KEY_CUSTOMER, null)
     private val shouldFetchFromCaiNiao: Boolean
-        get() = secretKey.isNullOrBlank() || customer.isNullOrBlank()
+        get() {
+            val useKuaidi100 = pref?.getBoolean(PREF_KEY_DATA_SOURCE, false) ?: false
+            return if (useKuaidi100) {
+                secretKey.isNullOrBlank() || customer.isNullOrBlank()
+            } else {
+                true
+            }
+        }
 
     override fun onInit() = configs {
         isDebug = BuildConfig.DEBUG
@@ -41,6 +48,34 @@ class HookEntry : IYukiHookXposedInit {
 
     override fun onHook() = encase {
         loadApp(name = PA_PACKAGE_NAME) {
+            // From PA 5.5.55, use ExpressRouter
+            // public static void route(Context context, Object obj, ExpressEntry expressEntry)
+            findClass(PA_EXPRESS_ROUTER)
+                .hook {
+                    val expressEntryClass =
+                        PA_EXPRESS_ENTRY.toClassOrNull() ?: PA_EXPRESS_ENTRY_OLD.toClassOrNull()
+                        ?: return@loadApp
+                    injectMember {
+                        method {
+                            name = "route"
+                            param(ContextClass, ObjectClass, expressEntryClass)
+                        }
+
+                        replaceAny {
+                            val context = args().first().cast<Context>()!!
+                            val expressEntry = args(2).any()!!
+                            val expressEntryWrapper = expressEntry.toExpressEntryWrapper()
+                            if (jumpToDetailsActivity(context, expressEntryWrapper)) {
+                                return@replaceAny null
+                            }
+
+                            // Other details will be processed normally
+                            return@replaceAny invokeOriginal(*args)
+                        }
+                    }
+                }
+
+
             // Old version
             // public static String gotoExpressDetailPage(Context context, ExpressEntry expressEntry, boolean z, boolean z2)
             // New version
@@ -189,7 +224,7 @@ class HookEntry : IYukiHookXposedInit {
             return true
         } else {
             // Details of packages from Xiaomi or JingDong will be showed in built-in app
-            if (!expressEntryWrapper.isXiaomiOrJingDong) {
+            if (!expressEntryWrapper.shouldUseNativeUI) {
                 ExpressDetailsActivity.gotoDetailsActivity(
                     context,
                     MiuiExpress(companyCode, companyName, mailNumber, phoneNumber),
